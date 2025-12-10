@@ -2,9 +2,7 @@
 from .login import set_user_active
 
 def main_menu(email):
-    """Menú principal después de iniciar sesión."""
     
-    print("\n--- PANTALLA DE INICIO ---")
     print(f"Usuario actual: {email}")
     
     while True:
@@ -19,10 +17,10 @@ def main_menu(email):
             print("Ejecutando la Acción del Sistema...")
         elif choice == '2':
             set_user_active(email, False)
-            print("👋 Sesión cerrada correctamente.")
+            print("Sesión cerrada correctamente.")
             return 'logout' 
         elif choice == '3':
-            print("👋 Saliendo de la terminal. Tu sesión se mantendrá ACTIVA.")
+            print("Saliendo de la terminal. Tu sesión se mantendrá ACTIVA.")
             return 'exit' 
         else:
-            print("⚠️ Opción no válida. Intenta de nuevo.")
+            print("Opción no válida. Intenta de nuevo.")

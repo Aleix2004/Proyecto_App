@@ -1,11 +1,9 @@
-# src/registro.py
 import re
 import json
 import os
 from datetime import datetime
 import uuid
 
-# --- CONFIGURACIÓN Y CONSTANTES (Igual que antes) ---
 DB_FILE_PATH = os.path.join('data', 'users.json')
 
 MIN_NUMEROS = 3
@@ -18,7 +16,6 @@ PASSWORD_REGEX = re.compile(
 )
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
 
-# --- FUNCIONES DE I/O Y UTILIDAD (Exportadas) ---
 
 def load_users():
     """Carga los datos de usuarios desde el archivo JSON."""
@@ -33,65 +30,59 @@ def load_users():
         return {}
 
 def save_users(users):
-    """Guarda los datos de usuarios en el archivo JSON."""
+
     if not os.path.exists('data'):
         os.makedirs('data')
     with open(DB_FILE_PATH, 'w') as f:
         json.dump(users, f, indent=4)
 
 def display_password_rules():
-    """Muestra las reglas de la contraseña."""
     print("\n--- REQUISITOS DE CONTRASEÑA ---")
     print("* Longitud mínima: **8 caracteres**")
     print("* Debe contener: **Mayúsculas** y **Minúsculas**")
     print(f"* Mínimo **{MIN_NUMEROS} números**.")
     print(f"* Mínimo **{MIN_ESPECIALES} caracteres especiales** (permitidos: {CARACTERES_ESPECIALES}).")
-    print("---------------------------------")
 
-# --- FUNCIONES DE VALIDACIÓN ---
 
 def validate_password(password):
     if not PASSWORD_REGEX.fullmatch(password):
-        print("❌ Error: La contraseña no cumple con todos los requisitos de seguridad.")
+        print("Error: La contraseña no cumple con todos los requisitos de seguridad.")
         display_password_rules()
         return False
     return True
 
 def validate_email(email, users):
     if not EMAIL_REGEX.fullmatch(email):
-        print("❌ Error: Formato de correo electrónico inválido.")
+        print("Error: Formato de correo electrónico inválido.")
         return False
     if email in users:
-        print("❌ Error: Este correo electrónico ya está registrado.")
+        print("Error: Este correo electrónico ya está registrado.")
         return False
     return True
 
-# --- FUNCIÓN PRINCIPAL DE REGISTRO ---
 
 def register_flow():
-    """Flujo interactivo para el registro de usuario."""
     users = load_users()
     print("\n--- REGISTRO DE NUEVO USUARIO ---")
     
-    nombre_completo = input("➡️ Nombre Completo: ").strip()
+    nombre_completo = input("Nombre Completo: ").strip()
 
     while True:
-        email = input("➡️ Correo Electrónico: ").strip()
+        email = input("Correo Electrónico: ").strip()
         if validate_email(email, users):
             break
 
     while True:
-        password = input("➡️ Contraseña: ").strip()
+        password = input("Contraseña: ").strip()
         if validate_password(password):
-            password_x2 = input("➡️ Repite la Contraseña: ").strip()
+            password_x2 = input("Repite la Contraseña: ").strip()
             if password == password_x2:
                 break
             else:
-                print("❌ Error: Las contraseñas no coinciden. Intenta de nuevo.")
+                print("Error: Las contraseñas no coinciden. Intenta de nuevo.")
 
-    fecha_nacimiento = input("➡️ Fecha de Nacimiento (ej: 01/01/2000): ").strip()
+    fecha_nacimiento = input("Fecha de Nacimiento (ej: 01/01/2000): ").strip()
     
-    # --- CREACIÓN DE DATA INTERNA ---
     user_id = str(uuid.uuid4())
     date_registro = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -109,5 +100,5 @@ def register_flow():
     
     users[email] = new_user_data
     save_users(users)
-    print("\n✅ ¡Registro exitoso! Ahora puedes iniciar sesión.")
+    print("\n¡Registro exitoso! Ahora puedes iniciar sesión.")
     return True
