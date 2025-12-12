@@ -1,3 +1,4 @@
+# main.py
 import sys
 import os
 
@@ -12,21 +13,9 @@ def run_project():
     current_user_email = None
 
     while True:
+        print("\n=== SISTEMA DE AUTENTICACIÓN PYTHON ===")
+
         if current_user_email is None:
-            current_user_email = login_flow()
-
-        if current_user_email:
-            action = main_menu(current_user_email)
-            
-            if action == 'logout':
-                current_user_email = None 
-            elif action == 'exit':
-                break 
-
-        else:
-
-            print("  SISTEMA DE AUTENTICACIÓN PYTHON ")
-            print("==================================")
             print("Elige una opción:")
             print("1. Iniciar Sesión")
             print("2. Registrar Nuevo Usuario")
@@ -35,14 +24,30 @@ def run_project():
             choice = input("Opción: ").strip()
 
             if choice == '1':
-                continue 
+                current_user_email = login_flow()
+                if current_user_email is None:
+                    print("❌ Login fallido. Intenta de nuevo.")
+
             elif choice == '2':
                 register_flow()
+                print("✅ Usuario registrado. Ahora inicia sesión.")
+
             elif choice == '3':
                 print("Saliendo del sistema. ¡Adiós!")
                 break
+
             else:
                 print("Opción no válida. Intenta de nuevo.")
+        
+        else:
+            # Usuario logeado correctamente → ir al menú principal
+            action = main_menu(current_user_email)
+            
+            if action == 'logout':
+                current_user_email = None
+            elif action == 'exit':
+                break
+
 
 if __name__ == "__main__":
     run_project()
