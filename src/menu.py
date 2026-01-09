@@ -1,15 +1,13 @@
-# src/menu.py
 from .login import set_user_active
 from .api_jikan import obtener_personajes, obtener_animes_populares
+from .scraping_anime import obtener_animes_generales
 
-# Diccionario de animes de ejemplo con sus IDs de MyAnimeList
 ANIMES_EJEMPLO = {
     "Naruto": 20,
     "Naruto Shippuden": 1735,
     "One Piece": 21,
     "Bleach": 269,
     "Dragon Ball": 813,
-    "Dragon Ball Z": 813,
     "Attack on Titan": 16498,
     "Fullmetal Alchemist: Brotherhood": 5114
 }
@@ -48,7 +46,7 @@ def mostrar_animes_populares():
         print("❌ No se pudieron obtener los animes.")
         return
 
-    print("=== ANIMES POPULARES ===")
+    print("=== ANIMES POPULARES (API) ===")
     for a in animes:
         nombre = a.get("title", "Desconocido")
         score = a.get("score", "N/A")
@@ -56,15 +54,28 @@ def mostrar_animes_populares():
         print(f"Puntaje: {score}")
         print("-" * 40)
 
+def mostrar_animes_scraping():
+    print("\nObteniendo animes mediante scraping desde Wikipedia...\n")
+    animes = obtener_animes_generales(limit=15)
+
+    if not animes:
+        print("❌ No se pudieron obtener datos.")
+        return
+
+    print("=== ANIMES (SCRAPING) ===")
+    for i, anime in enumerate(animes, 1):
+        print(f"{i}. {anime}")
+
 def main_menu(email):
     print(f"Usuario actual: {email}")
     
     while True:
         print("\nElige una opción:")
-        print("1. Ver personajes de un anime por ID")
-        print("2. Ver animes más populares")
-        print("3. Cerrar Sesión")
-        print("4. Salir (Deja la Sesión Activa)")
+        print("1. Ver personajes de un anime (API)")
+        print("2. Ver animes más populares (API)")
+        print("3. Ver animes (Scraping)")
+        print("4. Cerrar Sesión")
+        print("5. Salir (Deja la Sesión Activa)")
         
         choice = input("Opción: ").strip()
         
@@ -73,11 +84,13 @@ def main_menu(email):
         elif choice == '2':
             mostrar_animes_populares()
         elif choice == '3':
+            mostrar_animes_scraping()
+        elif choice == '4':
             set_user_active(email, False)
             print("Sesión cerrada correctamente.")
-            return 'logout' 
-        elif choice == '4':
+            return 'logout'
+        elif choice == '5':
             print("Saliendo de la terminal. Tu sesión se mantendrá ACTIVA.")
-            return 'exit' 
+            return 'exit'
         else:
             print("Opción no válida. Intenta de nuevo.")
