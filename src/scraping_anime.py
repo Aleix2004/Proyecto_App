@@ -1,3 +1,4 @@
+# src/web_scraping.py
 import requests
 from bs4 import BeautifulSoup
 
@@ -16,7 +17,7 @@ def obtener_animes_generales(limit=15):
 
         if response.status_code != 200:
             print(f"❌ Error HTTP: {response.status_code}")
-            return []
+            return {"ok": False, "animes": []}
 
         soup = BeautifulSoup(response.text, "html.parser")
         animes = []
@@ -31,10 +32,10 @@ def obtener_animes_generales(limit=15):
                     animes.append(titulo)
 
                 if len(animes) >= limit:
-                    return animes
+                    return {"ok": True, "animes": animes}
 
-        return animes
+        return {"ok": True, "animes": animes}
 
     except Exception as e:
         print("❌ Error en scraping:", e)
-        return []
+        return {"ok": False, "animes": []}

@@ -1,0 +1,122 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: white;
+  min-height: 100vh;
+}
+
+/* CONTENEDOR PRINCIPAL */
+.app-container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 30px;
+}
+
+/* ====== LOGIN / REGISTER ====== */
+.auth-card {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 30px;
+  max-width: 400px;
+  margin: 80px auto;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.auth-card h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.auth-card input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+}
+
+.auth-card button {
+  width: 100%;
+  padding: 12px;
+  background: #ff9800;
+  color: black;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.auth-card button:hover {
+  background: #ffc107;
+}
+
+.link {
+  color: #4fc3f7;
+  cursor: pointer;
+  text-align: center;
+}
+
+/* ====== HEADER ====== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logout-btn {
+  background: #e53935;
+  border: none;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: #ff5252;
+}
+
+/* ====== ANIMES ====== */
+.section-title {
+  margin-top: 40px;
+  margin-bottom: 15px;
+}
+
+.anime-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.anime-card {
+  background: rgba(255, 255, 255, 0.12);
+  padding: 16px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.anime-card:hover {
+  transform: translateY(-6px);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.anime-card h4 {
+  margin: 0;
+}
+
+/* ====== PERSONAJES ====== */
+.personajes {
+  margin-top: 20px;
+}
+
+.personaje {
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}

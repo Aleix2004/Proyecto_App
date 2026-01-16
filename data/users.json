@@ -9,5 +9,49 @@
             "date_registro": "2025-12-10 20:05:39",
             "activo": true
         }
+    },
+    "paquito@gmail.com": {
+        "nombre_completo": "paquito",
+        "correo": "paquito@gmail.com",
+        "contrasena": "Paquito123!!",
+        "fecha_nacimiento": "",
+        "interno": {
+            "id_individual": "d4ec586a-a6d7-45f5-87c6-7f0ebc51b217",
+            "date_registro": "2026-01-14 00:06:20",
+            "activo": true
+        }
+    },
+    "paco@gmail.com": {
+        "nombre_completo": "paco",
+        "correo": "paco@gmail.com",
+        "contrasena": "PacoMorales!!!123",
+        "fecha_nacimiento": "12/05/2009",
+        "interno": {
+            "id_individual": "5a8fa68f-c2b8-4f95-ab49-ef8e7c467351",
+            "date_registro": "2026-01-14 00:35:07",
+            "activo": true
+        }
+    },
+    "jony@gmail.com": {
+        "nombre_completo": "jony",
+        "correo": "jony@gmail.com",
+        "contrasena": "Jony123!!!",
+        "fecha_nacimiento": "2026-01-05",
+        "interno": {
+            "id_individual": "87849626-62d8-42c8-9fa9-600ba7e75cfa",
+            "date_registro": "2026-01-14 00:56:20",
+            "activo": true
+        }
+    },
+    "satoru@gmail.com": {
+        "nombre_completo": "satoru",
+        "correo": "satoru@gmail.com",
+        "contrasena": "Satoru123!!!",
+        "fecha_nacimiento": "2026-01-07",
+        "interno": {
+            "id_individual": "041686b0-5e30-4e6a-81ee-f634d40ae851",
+            "date_registro": "2026-01-16 02:55:36",
+            "activo": true
+        }
     }
 }

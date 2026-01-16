@@ -1,53 +1,115 @@
 # main.py
-import sys
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+import json
 import os
+import uuid
+from datetime import datetime
 
-sys.path.append(os.path.dirname(__file__)) 
+# Importamos funciones
+from src.api_jikan import obtener_personajes, obtener_animes_populares
+from src.scraping_anime import obtener_animes_generales  # scraping síncrono
 
-from src.registro import register_flow  
-from src.login import login_flow        
-from src.menu import main_menu          
+USERS_FILE = os.path.join("data", "users.json")
 
+app = FastAPI(title="AnimeApp Backend")
 
-def run_project():
-    current_user_email = None
+# CORS: permitir que React haga peticiones
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # tu frontend
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-    while True:
-        print("\n=== SISTEMA DE AUTENTICACIÓN PYTHON ===")
+# -------------------------------
+# Schemas
+# -------------------------------
+class LoginSchema(BaseModel):
+    email: str
+    password: str
 
-        if current_user_email is None:
-            print("Elige una opción:")
-            print("1. Iniciar Sesión")
-            print("2. Registrar Nuevo Usuario")
-            print("3. Salir del programa")
-            
-            choice = input("Opción: ").strip()
+class RegisterSchema(BaseModel):
+    nombre: str
+    email: str
+    password: str
+    fecha_nacimiento: str
 
-            if choice == '1':
-                current_user_email = login_flow()
-                if current_user_email is None:
-                    print("❌ Login fallido. Intenta de nuevo.")
+# -------------------------------
+# Funciones auxiliares
+# -------------------------------
+def load_users():
+    if not os.path.exists(USERS_FILE):
+        return {}
+    with open(USERS_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
 
-            elif choice == '2':
-                register_flow()
-                print("✅ Usuario registrado. Ahora inicia sesión.")
+def save_users(users):
+    with open(USERS_FILE, "w", encoding="utf-8") as f:
+        json.dump(users, f, indent=4, ensure_ascii=False)
 
-            elif choice == '3':
-                print("Saliendo del sistema. ¡Adiós!")
-                break
+# -------------------------------
+# Endpoints
+# -------------------------------
 
-            else:
-                print("Opción no válida. Intenta de nuevo.")
-        
-        else:
-            # Usuario logeado correctamente → ir al menú principal
-            action = main_menu(current_user_email)
-            
-            if action == 'logout':
-                current_user_email = None
-            elif action == 'exit':
-                break
+## Registro
+@app.post("/register")
+def api_register(data: RegisterSchema):
+    users = load_users()
+    email = data.email.lower()
+    
+    if email in users:
+        return {"ok": False, "msg": "Usuario ya existe"}
 
+    users[email] = {
+        "nombre_completo": data.nombre,
+        "correo": email,
+        "contrasena": data.password,
+        "fecha_nacimiento": data.fecha_nacimiento,
+        "interno": {
+            "id_individual": str(uuid.uuid4()),
+            "date_registro": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "activo": True
+        }
+    }
 
-if __name__ == "__main__":
-    run_project()
+    save_users(users)
+    return {"ok": True, "msg": "Usuario registrado correctamente", "email": email}
+
+## Login
+@app.post("/login")
+def api_login(data: LoginSchema):
+    users = load_users()
+    email = data.email.lower()
+
+    user = users.get(email)
+    if not user or user["contrasena"] != data.password:
+        return {"ok": False, "msg": "Usuario o contraseña incorrecta"}
+
+    return {"ok": True, "msg": f"Bienvenido, {user['nombre_completo']}", "email": email}
+
+## Animes populares (API)
+@app.get("/animes-populares")
+def api_animes_populares():
+    return obtener_animes_populares()  # síncrono, devuelve lista de títulos
+
+## Personajes de un anime (API)
+@app.get("/personajes")
+async def api_personajes(nombre_anime: str):
+    """
+    Este endpoint llama a la API de Jikan de forma asíncrona.
+    """
+    resultado = await obtener_personajes(nombre_anime)
+    return resultado
+
+## Animes generales (scraping)
+@app.get("/animes-generales")
+def api_animes_generales(limit: int = 15):
+    """
+    Este endpoint usa scraping de Wikipedia para devolver animes generales.
+    Síncrono, no afecta la API de Jikan.
+    """
+    animes = obtener_animes_generales(limit)
+    return {"ok": True, "animes": animes}

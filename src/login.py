@@ -1,34 +1,29 @@
-from .registro import load_users, save_users 
+# src/login.py
+import json
+import os
+from hashlib import sha256
 
-def set_user_active(email, is_active):
+USERS_FILE = os.path.join("data", "users.json")
+
+def load_users():
+    if not os.path.exists(USERS_FILE):
+        return {}
+    with open(USERS_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def login_user(data):
+    email = data.get("email", "").strip()
+    password = data.get("password", "").strip()
+
+    if not email or not password:
+        return False, "Email y contraseña son obligatorios."
+
     users = load_users()
-    if email in users:
-        users[email]['interno']['activo'] = is_active
-        save_users(users)
-        return True
-    return False
-
-def login_flow():
-    users = load_users()
-    
-    for email, user_data in users.items():
-        if user_data.get('interno', {}).get('activo') is True:
-            print(f"\n✨ ¡Bienvenido de vuelta, {user_data['nombre_completo']}! Sesión activa encontrada.")
-            return email 
-
-    email = input("➡️ Correo Electrónico: ").strip()
-    password = input("➡️ Contraseña: ").strip()
-
     if email not in users:
-        print("Error: Correo no registrado.")
-        return None
-    
-    user_data = users[email]
-    
-    if user_data['contrasena'] == password:
-        set_user_active(email, True)
-        print(f"\n¡Bienvenido, {user_data['nombre_completo']}! Sesión iniciada.")
-        return email 
-    else:
-        print("Error: Contraseña incorrecta.")
-        return None
+        return False, "Email o contraseña incorrectos."
+
+    stored_hash = users[email]["contrasena"]
+    if sha256(password.encode()).hexdigest() != stored_hash:
+        return False, "Email o contraseña incorrectos."
+
+    return True, f"Bienvenido, {users[email]['nombre_completo']}!"
