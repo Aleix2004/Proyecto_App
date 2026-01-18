@@ -18,7 +18,7 @@ app = FastAPI(title="AnimeApp Backend")
 # CORS: permitir que React haga peticiones
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # tu frontend
+    allow_origins=["http://localhost:5173", "http://localhost:8001", "http://127.0.0.1:8001"],  # tu frontend
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -113,3 +113,8 @@ def api_animes_generales(limit: int = 15):
     """
     animes = obtener_animes_generales(limit)
     return {"ok": True, "animes": animes}
+
+# Documentación automática
+@app.get("/docs")
+def obtener_documentacion():
+    return {"docs_url": "http://127.0.0.1:8000/docs"}

@@ -11,13 +11,21 @@ def obtener_animes_generales(limit=15):
     """
     Scraping responsable de animes en general desde Wikipedia,
     respetando robots.txt y obteniendo títulos reales.
+    Si falla, usa una lista por defecto.
     """
+    animes_default = [
+        "Naruto", "One Piece", "Bleach", "My Hero Academia",
+        "Attack on Titan", "Demon Slayer", "Jujutsu Kaisen",
+        "Chainsaw Man", "Death Note", "Steins;Gate", "Code Geass",
+        "Cowboy Bebop", "Neon Genesis Evangelion", "Fullmetal Alchemist"
+    ]
+    
     try:
         response = requests.get(URL, headers=HEADERS, timeout=10)
 
         if response.status_code != 200:
-            print(f"❌ Error HTTP: {response.status_code}")
-            return {"ok": False, "animes": []}
+            print(f"❌ Error HTTP: {response.status_code}, usando animes por defecto")
+            return {"ok": True, "animes": animes_default[:limit]}
 
         soup = BeautifulSoup(response.text, "html.parser")
         animes = []
@@ -34,8 +42,8 @@ def obtener_animes_generales(limit=15):
                 if len(animes) >= limit:
                     return {"ok": True, "animes": animes}
 
-        return {"ok": True, "animes": animes}
+        return {"ok": True, "animes": animes if animes else animes_default[:limit]}
 
     except Exception as e:
-        print("❌ Error en scraping:", e)
-        return {"ok": False, "animes": []}
+        print("❌ Error en scraping:", e, "usando animes por defecto")
+        return {"ok": True, "animes": animes_default[:limit]}

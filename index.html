@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnimeApp</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #764ba2;
+        }
+
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .anime-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .anime-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            text-align: center;
+        }
+
+        .anime-card:hover {
+            transform: scale(1.05);
+        }
+
+        .personaje {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 8px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📺 AnimeApp</h1>
+            <div class="nav-buttons">
+                <button onclick="showSection('home')">Inicio</button>
+                <button onclick="showSection('popular')">Animes Populares</button>
+                <button onclick="showSection('generales')">Animes Generales</button>
+                <button onclick="showSection('personajes')">Personajes</button>
+                <button onclick="showSection('login')">Login</button>
+                <button onclick="showSection('register')">Registro</button>
+            </div>
+        </header>
+
+        <!-- Sección Inicio -->
+        <div id="home" class="section active">
+            <h2>Bienvenido a AnimeApp</h2>
+            <p>Una aplicación para explorar animes, personajes y mucho más.</p>
+            <p style="margin-top: 15px; color: #666;">Usa los botones de arriba para navegar por la aplicación.</p>
+        </div>
+
+        <!-- Sección Animes Populares -->
+        <div id="popular" class="section">
+            <h2>Animes Populares</h2>
+            <div class="message" id="popular-message"></div>
+            <div id="popular-content"></div>
+        </div>
+
+        <!-- Sección Animes Generales -->
+        <div id="generales" class="section">
+            <h2>Animes Generales</h2>
+            <div class="message" id="generales-message"></div>
+            <div id="generales-content"></div>
+        </div>
+
+        <!-- Sección Personajes -->
+        <div id="personajes" class="section">
+            <h2>Personajes de Anime</h2>
+            <div class="form-group">
+                <label>Nombre del Anime:</label>
+                <input type="text" id="anime-input" placeholder="Ej: Chainsaw Man">
+                <button onclick="buscarPersonajes()" style="margin-top: 10px; width: 100%;">Buscar</button>
+            </div>
+            <div class="message" id="personajes-message"></div>
+            <div id="personajes-content"></div>
+        </div>
+
+        <!-- Sección Login -->
+        <div id="login" class="section">
+            <h2>Iniciar Sesión</h2>
+            <div class="message" id="login-message"></div>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="login-email" placeholder="tu@email.com">
+            </div>
+            <div class="form-group">
+                <label>Contraseña:</label>
+                <input type="password" id="login-password" placeholder="Tu contraseña">
+            </div>
+            <button onclick="hacerLogin()" style="width: 100%;">Iniciar Sesión</button>
+        </div>
+
+        <!-- Sección Registro -->
+        <div id="register" class="section">
+            <h2>Crear Cuenta</h2>
+            <div class="message" id="register-message"></div>
+            <div class="form-group">
+                <label>Nombre Completo:</label>
+                <input type="text" id="register-name" placeholder="Tu nombre">
+            </div>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="register-email" placeholder="tu@email.com">
+            </div>
+            <div class="form-group">
+                <label>Contraseña:</label>
+                <input type="password" id="register-password" placeholder="Tu contraseña">
+            </div>
+            <div class="form-group">
+                <label>Fecha de Nacimiento:</label>
+                <input type="date" id="register-birth">
+            </div>
+            <button onclick="hacerRegistro()" style="width: 100%;">Registrarse</button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:8000';
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+
+            if (sectionId === 'popular') cargarAnimesPopulares();
+            if (sectionId === 'generales') cargarAnimesGenerales();
+        }
+
+        function showMessage(elementId, message, type) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.className = `message ${type} show`;
+            setTimeout(() => el.classList.remove('show'), 3000);
+        }
+
+        async function cargarAnimesPopulares() {
+            const content = document.getElementById('popular-content');
+            content.innerHTML = '<div class="loading">Cargando animes populares...</div>';
+
+            try {
+                const res = await fetch(`${API_URL}/animes-populares`);
+                const data = await res.json();
+
+                if (data.ok) {
+                    const html = data.animes.map(anime => 
+                        `<div class="anime-card" onclick="buscarPersonajesDesde('${anime}')">${anime}</div>`
+                    ).join('');
+                    content.innerHTML = `<div class="anime-grid">${html}</div>`;
+                } else {
+                    showMessage('popular-message', 'Error al cargar animes', 'error');
+                }
+            } catch (err) {
+                showMessage('popular-message', 'Error de conexión', 'error');
+                console.error(err);
+            }
+        }
+
+        async function cargarAnimesGenerales() {
+            const content = document.getElementById('generales-content');
+            content.innerHTML = '<div class="loading">Cargando animes generales...</div>';
+
+            try {
+                const res = await fetch(`${API_URL}/animes-generales`);
+                const data = await res.json();
+
+                if (data.ok) {
+                    const html = data.animes.map(anime => 
+                        `<div class="anime-card">${anime}</div>`
+                    ).join('');
+                    content.innerHTML = `<div class="anime-grid">${html}</div>`;
+                } else {
+                    showMessage('generales-message', 'Error al cargar animes', 'error');
+                }
+            } catch (err) {
+                showMessage('generales-message', 'Error de conexión', 'error');
+                console.error(err);
+            }
+        }
+
+        function buscarPersonajesDesde(nombre) {
+            document.getElementById('anime-input').value = nombre;
+            showSection('personajes');
+            buscarPersonajes();
+        }
+
+        async function buscarPersonajes() {
+            const nombre = document.getElementById('anime-input').value.trim();
+            if (!nombre) {
+                showMessage('personajes-message', 'Ingresa un nombre de anime', 'error');
+                return;
+            }
+
+            const content = document.getElementById('personajes-content');
+            content.innerHTML = '<div class="loading">Buscando personajes...</div>';
+
+            try {
+                const res = await fetch(`${API_URL}/personajes?nombre_anime=${encodeURIComponent(nombre)}`);
+                const data = await res.json();
+
+                if (data.ok && data.personajes.length > 0) {
+                    const html = data.personajes.map(p => 
+                        `<div class="personaje">${p}</div>`
+                    ).join('');
+                    content.innerHTML = html;
+                } else {
+                    content.innerHTML = '<p style="text-align: center; color: #999;">No se encontraron personajes</p>';
+                }
+            } catch (err) {
+                showMessage('personajes-message', 'Error al buscar personajes', 'error');
+                console.error(err);
+            }
+        }
+
+        async function hacerLogin() {
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            if (!email || !password) {
+                showMessage('login-message', 'Completa todos los campos', 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+
+                if (data.ok) {
+                    showMessage('login-message', data.msg, 'success');
+                    document.getElementById('login-email').value = '';
+                    document.getElementById('login-password').value = '';
+                } else {
+                    showMessage('login-message', data.msg, 'error');
+                }
+            } catch (err) {
+                showMessage('login-message', 'Error al iniciar sesión', 'error');
+                console.error(err);
+            }
+        }
+
+        async function hacerRegistro() {
+            const nombre = document.getElementById('register-name').value.trim();
+            const email = document.getElementById('register-email').value.trim();
+            const password = document.getElementById('register-password').value;
+            const fechaNacimiento = document.getElementById('register-birth').value;
+
+            if (!nombre || !email || !password || !fechaNacimiento) {
+                showMessage('register-message', 'Completa todos los campos', 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nombre,
+                        email,
+                        password,
+                        fecha_nacimiento: fechaNacimiento
+                    })
+                });
+                const data = await res.json();
+
+                if (data.ok) {
+                    showMessage('register-message', data.msg, 'success');
+                    document.getElementById('register-name').value = '';
+                    document.getElementById('register-email').value = '';
+                    document.getElementById('register-password').value = '';
+                    document.getElementById('register-birth').value = '';
+                } else {
+                    showMessage('register-message', data.msg, 'error');
+                }
+            } catch (err) {
+                showMessage('register-message', 'Error al registrarse', 'error');
+                console.error(err);
+            }
+        }
+    </script>
+</body>
+</html>
