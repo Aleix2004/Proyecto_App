@@ -33,7 +33,7 @@ def obtener_animes_populares():
     ]
     return {"ok": True, "animes": animes}
 
-
+#Realiza "gets" asíncronos a JikanAPI
 async def fetch_json(url, params=None):
     """Hace request GET a Jikan con timeout"""
     timeout = ClientTimeout(total=30)  # hasta 30s de espera
@@ -45,7 +45,7 @@ async def fetch_json(url, params=None):
 
 
 async def obtener_personajes(nombre_anime: str):
-    """Obtiene personajes de un anime, con fallback y cache"""
+    # Obtiene personajes principales de un anime por su nombre 
     if nombre_anime in personajes_cache:
         return {"ok": True, "personajes": personajes_cache[nombre_anime]}
 
@@ -65,9 +65,10 @@ async def obtener_personajes(nombre_anime: str):
             if not personajes:  # fallback si API no devuelve nada
                 personajes = FALLBACK_PERSONAJES.get(nombre_anime, [])
 
+    #En caso de error, usa fallback
     except Exception as e:
         print(f"Error al obtener personajes de '{nombre_anime}': {e}")
         personajes = FALLBACK_PERSONAJES.get(nombre_anime, [])
-
+    # Guarda en cache
     personajes_cache[nombre_anime] = personajes
     return {"ok": True, "personajes": personajes}

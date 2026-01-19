@@ -53,5 +53,16 @@
             "date_registro": "2026-01-16 02:55:36",
             "activo": true
         }
+    },
+    "tonimarquez985@gmail.com": {
+        "nombre_completo": "Antoñta Cuadradeta",
+        "correo": "tonimarquez985@gmail.com",
+        "contrasena": "123456789Aa@",
+        "fecha_nacimiento": "2005-03-02",
+        "interno": {
+            "id_individual": "2f749b9b-8f2a-402c-8e4f-8687d0cd083b",
+            "date_registro": "2026-01-19 17:58:18",
+            "activo": true
+        }
     }
 }

@@ -34,6 +34,7 @@ def register_user(data):
     if email in users:
         return False, "El email ya está registrado."
 
+    #Estructura del Json
     users[email] = {
         "nombre_completo": nombre,
         "correo": email,

@@ -13,6 +13,7 @@ def obtener_animes_generales(limit=15):
     respetando robots.txt y obteniendo títulos reales.
     Si falla, usa una lista por defecto.
     """
+    #Por si acaso
     animes_default = [
         "Naruto", "One Piece", "Bleach", "My Hero Academia",
         "Attack on Titan", "Demon Slayer", "Jujutsu Kaisen",
@@ -27,11 +28,13 @@ def obtener_animes_generales(limit=15):
             print(f"❌ Error HTTP: {response.status_code}, usando animes por defecto")
             return {"ok": True, "animes": animes_default[:limit]}
 
+        #Usa BeautifulSoup para parsear el HTML
         soup = BeautifulSoup(response.text, "html.parser")
         animes = []
-
+        #Recorre los grupos de la categoría div
         grupos = soup.find_all("div", class_="mw-category-group")
 
+        # Extrae los títulos de los enlaces, revisa duplicados y almacena
         for grupo in grupos:
             enlaces = grupo.find_all("a")
             for a in enlaces:
